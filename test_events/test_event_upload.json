@@ -1,0 +1,4 @@
+{
+    "action": "upload",
+    "csv_data": "year,odometer,engine_power,accident_status,price_usd\n2016,243000,1.8,1,11000\n2007,190000,2.97,0,11500\n2011,166000,2.0,0,9599\n2012,138000,1.8,0,10499\n2007,280000,4.66,0,12200"
+}

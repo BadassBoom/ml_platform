@@ -1,0 +1,4 @@
+{
+    "action": "predict",
+    "input_data": [2015, 150000, 1.6, 0]
+}
