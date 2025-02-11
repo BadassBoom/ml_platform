@@ -12,7 +12,7 @@ The API is hosted on AWS Lambda and exposed via API Gateway.
    
 3. Run the script from your terminal:
 
-   `python test_api.py`.
+   `python test_function.py`.
 
 # Expected Output
 
