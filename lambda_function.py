@@ -7,6 +7,15 @@ import pandas as pd
 
 
 def lambda_handler(event, context):
+    if 'body' in event:
+        try:
+            event = json.loads(event['body'])  
+        except json.JSONDecodeError:
+            return {
+                'statusCode': 400,
+                'body': json.dumps('Invalid JSON format in request body.')
+            }
+
     action = event.get('action')
 
     if action == 'upload':
@@ -21,6 +30,7 @@ def lambda_handler(event, context):
             'body': json.dumps('Invalid action. Use "upload", "predict", or "update".')
         }
 
+
 def upload_and_train(event):
     csv_data = event.get('csv_data')
 
@@ -30,7 +40,12 @@ def upload_and_train(event):
     with open('/tmp/processed_data.csv', 'w') as f:
         f.write(csv_data)
 
+    print("CSV Data Written to File:", csv_data)
+
     df = pd.read_csv('/tmp/processed_data.csv')
+
+    print("Columns in CSV:", df.columns.tolist())
+
     df = preprocess_data(df)
 
     X = df[['year', 'odometer', 'engine_power', 'accident_status']].values
@@ -46,6 +61,7 @@ def upload_and_train(event):
         'statusCode': 200,
         'body': json.dumps('Model trained and saved successfully!')
     }
+
 
 def make_prediction(event):
     input_data = event.get('input_data')
@@ -94,9 +110,16 @@ def update_model(event):
     }
 
 def preprocess_data(df):
+    required_columns = ['year', 'odometer', 'engine_power', 'accident_status', 'price_usd']
+    
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    if missing_columns:
+        raise KeyError(f"Missing columns in the dataset: {missing_columns}")
+    
     df['engine_power'] = df['engine_power'].astype(str).str.replace(' л.', '', regex=False).astype(float)
     df['accident_status'] = df['accident_status'].astype(int)
     df['odometer'] = df['odometer'].astype(int)
     
     return df
+
 
